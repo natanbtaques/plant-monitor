@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(git init -b main)",
+      "PowerShell(pnpm install)",
+      "PowerShell(pnpm --filter @plant-monitor/simulator start)"
+    ]
+  }
+}
