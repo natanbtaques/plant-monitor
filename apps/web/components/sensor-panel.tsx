@@ -3,11 +3,11 @@
 import type { SensorNode, TreeNode } from '@plant-monitor/contracts';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo } from 'react';
+import { STATUS_COLOR } from '../lib/status';
 import { appendReading, historyQuery } from '../queries/history';
 import { useReadings } from '../stores/readings';
 import { useSensorStatus } from '../stores/sensor-status';
 import { useTreeUi } from '../stores/tree-ui';
-import { STATUS_COLOR } from './tree-view';
 
 // Decide o que mostrar a partir do nó selecionado na árvore.
 export function SensorPanel({ nodes }: { nodes: TreeNode[] }) {

@@ -1,41 +1,14 @@
 'use client';
 
-import type { HealthStatus, TreeNode } from '@plant-monitor/contracts';
+import type { TreeNode } from '@plant-monitor/contracts';
 import { useQueryClient } from '@tanstack/react-query';
 import { memo, useMemo } from 'react';
+import { STATUS_COLOR, worstStatus } from '../lib/status';
+import { buildIndex, type TreeIndex } from '../lib/tree-index';
 import { historyQuery } from '../queries/history';
 import { useReadings } from '../stores/readings';
-import { useSensorStatus, worstStatus } from '../stores/sensor-status';
+import { useSensorStatus } from '../stores/sensor-status';
 import { useTreeUi } from '../stores/tree-ui';
-
-interface TreeIndex {
-  childrenById: Map<string | null, TreeNode[]>; // parentId → filhos
-  sensorIdsById: Map<string, string[]>; // asset/location → sensores abaixo dele
-}
-
-// Lista plana → índices, uma vez só. A lista vem em pré-ordem (pai antes dos filhos).
-function buildIndex(nodes: TreeNode[]): TreeIndex {
-  const childrenById: TreeIndex['childrenById'] = new Map();
-  const sensorIdsById: TreeIndex['sensorIdsById'] = new Map();
-  const parentOf = new Map<string, string | null>();
-
-  for (const node of nodes) {
-    parentOf.set(node.id, node.parentId);
-    const siblings = childrenById.get(node.parentId);
-    if (siblings) siblings.push(node);
-    else childrenById.set(node.parentId, [node]);
-
-    // Cada sensor sobe pelos ancestrais (asset, location) e entra na lista de cada um.
-    if (node.kind === 'sensor') {
-      for (let id: string | null = node.parentId; id !== null; id = parentOf.get(id) ?? null) {
-        const ids = sensorIdsById.get(id);
-        if (ids) ids.push(node.id);
-        else sensorIdsById.set(id, [node.id]);
-      }
-    }
-  }
-  return { childrenById, sensorIdsById };
-}
 
 export function TreeView({ nodes }: { nodes: TreeNode[] }) {
   // `nodes` vem do cache do React Query (staleTime: Infinity): os índices são montados uma vez.
@@ -56,12 +29,6 @@ function SensorValue({ id, unit }: { id: string; unit: string }) {
   const value = useReadings((s) => s.byId[id]?.value);
   return <span> {value === undefined ? '—' : `${value} ${unit}`}</span>;
 }
-
-export const STATUS_COLOR: Record<HealthStatus, string> = {
-  ok: 'inherit',
-  warning: 'darkorange',
-  critical: 'crimson',
-};
 
 const plainButton = { border: 'none', background: 'none', cursor: 'pointer', padding: 0 };
 
