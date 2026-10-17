@@ -19,7 +19,10 @@ const HEADERS = {
   'Access-Control-Allow-Origin': process.env.CORS_ORIGIN ?? 'http://localhost:3000',
 };
 const SENSOR_COUNT = 2000; // volume que o front precisa aguentar
-const SENSORS_PER_ASSET = 2;
+// Um sensor por mancal: LA = lado acoplado (ponta do eixo ligada à máquina movida),
+// LOA = lado oposto ao acoplamento (onde fica a ventoinha).
+const MOUNT_POINTS = ['Mancal LA', 'Mancal LOA'];
+const SENSORS_PER_ASSET = MOUNT_POINTS.length;
 const ASSETS_PER_LOCATION = 20; // 2.000 sensores → 1.000 ativos → 50 locations
 const DEGRADING_FRACTION = 0.03; // ~3% dos sensores sempre degradando
 const REPAIR_AFTER_TICKS = 60; // segundos em crítico até a "manutenção"
@@ -46,10 +49,12 @@ for (let l = 1; l <= SENSOR_COUNT / (SENSORS_PER_ASSET * ASSETS_PER_LOCATION); l
     const assetId = `asset-${++assetCount}`;
     const name = `${ASSET_NAMES[Math.floor(Math.random() * ASSET_NAMES.length)]} ${assetCount}`;
     nodes.push({ kind: 'asset', id: assetId, parentId: `location-${l}`, name });
-    for (let s = 0; s < SENSORS_PER_ASSET; s++) {
+    for (const mountPoint of MOUNT_POINTS) {
       const sensorType = Math.random() < 0.65 ? 'vibration' : 'temperature';
       const id = `sensor-${++sensorCount}`;
-      nodes.push({ kind: 'sensor', id, parentId: assetId, sensorType, ...SENSOR_META[sensorType] });
+      const meta = SENSOR_META[sensorType];
+      const name = `${meta.name} · ${mountPoint}`; // ex.: "Vibração · Mancal LA"
+      nodes.push({ kind: 'sensor', id, parentId: assetId, sensorType, ...meta, name });
     }
   }
 }
