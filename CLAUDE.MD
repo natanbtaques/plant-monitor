@@ -20,7 +20,7 @@ Projeto de estudo para entrevista de Frontend na Tractian: um mini monitor indus
 
 ## Domínio
 
-Hierarquia: planta → área → linha → ativo → componente → sensor.
+Hierarquia: location → asset → sensor (como no desafio da Tractian), ~2 mil sensores.
 Sensores de vibração e temperatura, 1 Hz, com ruído e degradação gradual até alerta crítico.
 
 - Prefira a solução mais simples que atende ao pedido. Antes de adicionar

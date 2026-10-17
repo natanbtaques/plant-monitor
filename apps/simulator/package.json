@@ -4,22 +4,17 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/main.ts",
-    "start": "tsx src/main.ts",
-    "probe": "tsx scripts/probe.ts",
-    "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "dev": "tsx watch src/server.ts",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@plant-monitor/contracts": "workspace:*",
-    "ws": "^8.18.3",
-    "zod": "^4.1.5"
+    "ws": "^8.18.3"
   },
   "devDependencies": {
     "@types/node": "^20.19.0",
     "@types/ws": "^8.18.1",
     "tsx": "^4.20.3",
-    "typescript": "^5.8.3",
-    "vitest": "^3.2.4"
+    "typescript": "^5.8.3"
   }
 }
